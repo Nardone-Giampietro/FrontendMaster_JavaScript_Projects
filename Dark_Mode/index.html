@@ -20,7 +20,7 @@
 
 	<nav style="align-self:center;">
 
-		<label>
+		<label id="dark-mode">
 			<input type="checkbox" id="toggle" name="toggle" role="switch" checked>
 			Use dark mode
 		</label>
@@ -50,6 +50,69 @@
 		}
 
 		toggle.addEventListener("change", toggleTheme);
+	</script>
+
+	<script id="modal.js">
+		class Form {
+			element = document.createElement("form");
+			header = document.createElement("header");
+			heading = document.createElement("h2");
+			closeButton = document.createElement("button");
+
+			constructor(type, title, content) {
+				this.element.type = type;
+				this.heading.innerHTML = `<strong>${title}</strong>`;
+				this.header.appendChild(this.heading);
+				this.element.appendChild(this.header);
+				this.closeButton.setAttribute("class", "secondary");
+				this.closeButton.textContent = "Close";
+				this.closeButton.type = "submit";
+				this.element.appendChild(content);
+				this.element.appendChild(this.closeButton);
+			}
+		}
+
+		class Modal{
+			openButton = document.createElement("button");
+			dialog = document.createElement("dialog");
+
+			constructor(name, parentElement, contentElement) {
+				this.name = name;
+				this.openButton.textContent = this.name;
+				this.parentElement = parentElement;
+				this.content = contentElement;
+				this.#addEventListeners();
+				this.#setupForm();
+			}
+
+			#setupForm(){
+				const article = document.createElement("article");
+				const form = new Form("dialog", this.name, this.content);
+				article.appendChild(form.element);
+				form.closeButton.addEventListener("click", (event) => {
+					event.preventDefault();
+					this.dialog.close();
+				});
+				this.dialog.appendChild(article);
+			}
+
+			#addEventListeners(){
+				this.openButton.addEventListener("click", (event)  => {
+					this.dialog.showModal();
+				});
+			}
+
+			render(){
+				this.parentElement.replaceChildren(this.openButton);
+				this.parentElement.appendChild(this.dialog);
+			}
+		}
+
+		const parent = document.querySelector("nav");
+		const content = document.getElementById("dark-mode");
+		const darkModal = new Modal("Settings", parent, content);
+		darkModal.render();
+
 	</script>
 </body>
 
